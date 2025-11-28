@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { getForumPost } from '../data/forumPosts';
 
@@ -8,17 +8,34 @@ const ForumPost = () => {
   const fallback = getForumPost(id);
   const post = location.state?.post || fallback;
 
+  const baseLikes = useMemo(() => post?.upvotes || 0, [post]);
+  const [liked, setLiked] = useState(false);
+  const [comments, setComments] = useState([
+    { id: 1, author: 'Ayşe K.', text: 'Harika bir konu, teşekkürler!', createdAt: '2 saat önce' },
+    { id: 2, author: 'Mehmet T.', text: 'Ben de katılıyorum, iyi toparlanmış.', createdAt: '1 saat önce' },
+  ]);
+  const [newComment, setNewComment] = useState('');
+
   if (!post) {
     return (
-      <div style={{ maxWidth: '900px', margin: '40px auto', padding: '24px' }}>
+      <div className="detail-card" style={{ textAlign: 'center' }}>
         <h2>Bu gönderi bulunamadı.</h2>
         <p className="muted">Silinmiş veya henüz yayınlanmamış olabilir.</p>
       </div>
     );
   }
 
+  const handleAddComment = () => {
+    if (!newComment.trim()) return;
+    setComments((prev) => [
+      ...prev,
+      { id: Date.now(), author: 'Sen', text: newComment.trim(), createdAt: 'az önce' },
+    ]);
+    setNewComment('');
+  };
+
   return (
-    <article style={{ maxWidth: '900px', margin: '40px auto', padding: '24px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+    <article className="detail-card">
       <header style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
         <div>
           <p className="eyebrow" style={{ margin: 0 }}>Forum</p>
@@ -38,14 +55,64 @@ const ForumPost = () => {
         </div>
       )}
 
-      <p style={{ marginTop: '18px', color: '#374151', lineHeight: 1.6 }}>
+      <p style={{ marginTop: '18px', lineHeight: 1.6 }}>
         {post.excerpt}
       </p>
 
-      <div style={{ marginTop: '16px', display: 'flex', gap: '12px', color: '#4b5563' }}>
-        <span>👍 {post.upvotes}</span>
+      <div style={{ marginTop: '16px', display: 'flex', gap: '12px', color: 'inherit' }}>
+        <button
+          className={`like-button ${liked ? 'is-active' : ''}`}
+          onClick={() => setLiked((prev) => !prev)}
+        >
+          👍 {liked ? 'Beğenildi' : 'Beğen'} ({baseLikes + (liked ? 1 : 0)})
+        </button>
         <span>💬 {post.comments}</span>
       </div>
+
+      <section style={{ marginTop: '24px' }}>
+        <h3 style={{ margin: '0 0 10px' }}>Yorumlar</h3>
+        <div style={{ display: 'grid', gap: '12px' }}>
+          {comments.map((c) => (
+            <div key={c.id} className="comment-card">
+              <p style={{ margin: 0, fontWeight: 700 }}>
+                {c.author} <span style={{ color: '#6b7280', fontWeight: 400 }}>• {c.createdAt}</span>
+              </p>
+              <p className="comment-text" style={{ margin: '4px 0 0' }}>{c.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: '14px', display: 'flex', gap: '10px' }}>
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Yorum yaz..."
+            style={{
+              flex: 1,
+              minHeight: '70px',
+              borderRadius: '10px',
+              border: '1px solid #e5e7eb',
+              padding: '10px 12px',
+              fontFamily: 'inherit',
+            }}
+          />
+          <button
+            onClick={handleAddComment}
+            style={{
+              padding: '10px 14px',
+              borderRadius: '10px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #2d198e, #4f46e5)',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: 'pointer',
+              minWidth: '110px',
+            }}
+          >
+            Gönder
+          </button>
+        </div>
+      </section>
     </article>
   );
 };

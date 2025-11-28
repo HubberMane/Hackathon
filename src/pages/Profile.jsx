@@ -33,13 +33,13 @@ const Profile = () => {
       setStatus({ type: 'error', message: 'Ad Soyad ve E-Posta zorunludur.' });
       return;
     }
-    setStatus({ type: 'success', message: 'Profil bilgileriniz kaydedildi.' });
+      setStatus({ type: 'success', message: 'Profil bilgileriniz kaydedildi.' });
   };
 
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h2 style={{ margin: '0 0 12px 0', color: '#1f2937' }}>Profil Bilgilerim</h2>
+        <h2 className="profile-title">Profil Bilgilerim</h2>
 
         <div className="profile-avatar-wrapper">
           <img src={userData.avatar} alt="Profil" />
@@ -53,7 +53,7 @@ const Profile = () => {
             />
           </label>
         </div>
-        <span style={{ fontSize: '0.9rem', color: '#666' }}>Fotoğrafı değiştirmek için üzerine tıklayın</span>
+        <span className="muted" style={{ fontSize: '0.9rem' }}>Fotoğrafı değiştirmek için üzerine tıklayın</span>
       </div>
 
       <form onSubmit={(e) => e.preventDefault()}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import './App.css';
 
@@ -6,7 +6,6 @@ import Navbar from './components/Navbar';
 import ProfileDrawer from './components/ProfileDrawer';
 import Modal from './components/Modal';
 import Sports from './pages/Sports';
-import Profile from './pages/Profile';
 
 const tabFromPath = (pathname) => {
   if (pathname.startsWith('/spor')) return 'spor';
@@ -23,6 +22,7 @@ function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
@@ -47,6 +47,17 @@ function App() {
     setSelectedReservation(null);
   };
 
+  useEffect(() => {
+    const cls = 'dark-mode';
+    if (darkMode) {
+      document.body.classList.add(cls);
+      document.documentElement.classList.add(cls);
+    } else {
+      document.body.classList.remove(cls);
+      document.documentElement.classList.remove(cls);
+    }
+  }, [darkMode]);
+
   return (
     <div className="app-container">
       <Navbar
@@ -54,6 +65,8 @@ function App() {
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
         onOpenDrawer={() => setIsDrawerOpen(true)}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode((prev) => !prev)}
       />
 
       <main>

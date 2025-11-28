@@ -20,12 +20,20 @@ const Forum = () => {
 
   return (
     <div style={{ minHeight: '80vh', paddingBottom: '50px' }}>
-      <div style={{ backgroundColor: '#fff', padding: '40px 20px', borderBottom: '1px solid #eee', marginBottom: '20px' }}>
-        <h1 style={{ textAlign: 'center', margin: '0 0 20px 0', color: '#333' }}>Kampüs Forum</h1>
+      <div
+        className="forum-hero"
+        style={{
+          backgroundColor: '#fff',
+          padding: '40px 20px',
+          borderBottom: '1px solid #eee',
+          marginBottom: '20px',
+        }}
+      >
+        <h1 className="forum-page-title">Kampus Forum</h1>
         <div className="search-container">
           <input
             type="text"
-            placeholder="Konu başlığı, etiket veya içerik ara..."
+            placeholder="Konu basligi, etiket veya icerik ara..."
             className="search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -46,7 +54,9 @@ const Forum = () => {
               <div className="forum-content">
                 <div className="forum-tags">
                   {post.tags.map((tag, idx) => (
-                    <span key={idx} className="tag">{tag}</span>
+                    <span key={idx} className="tag">
+                      {tag}
+                    </span>
                   ))}
                 </div>
 
@@ -56,10 +66,12 @@ const Forum = () => {
                 <div className="forum-footer">
                   <div className="author-info">
                     <img src={post.authorAvatar} alt="avatar" className="author-avatar" />
-                    <span>{post.author} • {post.date}</span>
+                    <span>
+                      {post.author} • {post.date}
+                    </span>
                   </div>
                   <div className="interaction-stats">
-                    <span>👍 {post.upvotes}</span>
+                    <span>▲ {post.upvotes}</span>
                     <span>💬 {post.comments}</span>
                   </div>
                 </div>
@@ -68,7 +80,7 @@ const Forum = () => {
           ))
         ) : (
           <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '50px', color: '#888' }}>
-            <h3>Aradığınız kriterlere uygun konu bulunamadı.</h3>
+            <h3>Aradiginiz kriterlere uygun konu bulunamadi.</h3>
           </div>
         )}
       </div>

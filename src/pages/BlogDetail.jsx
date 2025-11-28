@@ -10,7 +10,7 @@ const BlogDetail = () => {
 
   if (!blog) {
     return (
-      <div style={{ maxWidth: '900px', margin: '40px auto', padding: '24px' }}>
+      <div className="detail-card" style={{ textAlign: 'center' }}>
         <h2>Bu blog bulunamadı.</h2>
         <p className="muted">Yayınlanmamış veya silinmiş olabilir.</p>
       </div>
@@ -18,7 +18,7 @@ const BlogDetail = () => {
   }
 
   return (
-    <article style={{ maxWidth: '900px', margin: '40px auto', padding: '24px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+    <article className="detail-card">
       <header style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
         <div>
           <p className="eyebrow" style={{ margin: 0 }}>Blog</p>
@@ -33,7 +33,7 @@ const BlogDetail = () => {
         </div>
       )}
 
-      <p style={{ marginTop: '18px', color: '#374151', lineHeight: 1.6 }}>
+      <p style={{ marginTop: '18px', lineHeight: 1.6 }}>
         {blog.body}
       </p>
     </article>

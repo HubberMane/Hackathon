@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar = ({ activeTab, isLoggedIn, setIsLoggedIn, onOpenDrawer }) => {
+const Navbar = ({ activeTab, isLoggedIn, setIsLoggedIn, onOpenDrawer, darkMode, onToggleDarkMode }) => {
   return (
     <nav className="navbar">
       <div
@@ -21,7 +21,10 @@ const Navbar = ({ activeTab, isLoggedIn, setIsLoggedIn, onOpenDrawer }) => {
         <Link className={`nav-item ${activeTab === 'profil' ? 'active' : ''}`} to="/profil">Profil</Link>
       </div>
 
-      <div className="nav-auth">
+      <div className="nav-auth" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <button className="login-btn" style={{ padding: '8px 12px' }} onClick={onToggleDarkMode}>
+          {darkMode ? '☀️ Aydınlık' : '🌙 Gece'}
+        </button>
         {isLoggedIn ? (
           <button className="profile-pic-btn" onClick={onOpenDrawer}>
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profil" />
