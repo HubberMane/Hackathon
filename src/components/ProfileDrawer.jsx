@@ -1,7 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const ProfileDrawer = ({ isOpen, onClose, onLogout }) => {
   if (!isOpen) return null;
+
+  const handleNavigate = () => {
+    onClose();
+  };
 
   return (
     <>
@@ -13,9 +18,8 @@ const ProfileDrawer = ({ isOpen, onClose, onLogout }) => {
         </div>
         
         <div className="drawer-menu">
-          <a href="#"> Profilim</a>
-          <a href="#"> Bloglarım</a>
-          <a href="#"> Ayarlar</a>
+          <Link to="/profil" onClick={handleNavigate}>Profilim</Link>
+          <Link to="/blogs" onClick={handleNavigate}>Postlarım</Link>
         </div>
 
         <button className="logout-btn" onClick={onLogout}>

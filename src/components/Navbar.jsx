@@ -1,21 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Navbar = ({ activeTab, setActiveTab, isLoggedIn, setIsLoggedIn, onOpenDrawer }) => {
+const Navbar = ({ activeTab, isLoggedIn, setIsLoggedIn, onOpenDrawer }) => {
   return (
     <nav className="navbar">
-      <div 
-        className="nav-brand" 
-        style={{fontSize: '24px', fontWeight: 'bold', color: '#333', cursor:'pointer'}}
-        onClick={() => setActiveTab('haberler')}
+      <div
+        className="nav-brand"
+        style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', cursor: 'pointer' }}
       >
-        KampüsPortal
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          KampüsPortal
+        </Link>
       </div>
-      
+
       <div className="nav-links">
-        <a onClick={() => setActiveTab('haberler')} className={`nav-item ${activeTab === 'haberler' ? 'active' : ''}`} href="#">Haberler</a>
-        <a onClick={() => setActiveTab('yemekhane')} className={`nav-item ${activeTab === 'yemekhane' ? 'active' : ''}`} href="#">Yemekhane</a>
-        <a onClick={() => setActiveTab('spor')} className={`nav-item ${activeTab === 'spor' ? 'active' : ''}`} href="#">Spor Tesisleri</a>
-        <a onClick={() => setActiveTab('forum')} className={`nav-item ${activeTab === 'forum' ? 'active' : ''}`} href="#">Forum</a>
+        <Link className={`nav-item ${activeTab === 'haberler' ? 'active' : ''}`} to="/blogs">Haberler</Link>
+        <Link className={`nav-item ${activeTab === 'yemekhane' ? 'active' : ''}`} to="/yemekhane">Yemekhane</Link>
+        <Link className={`nav-item ${activeTab === 'spor' ? 'active' : ''}`} to="/spor">Spor Tesisleri</Link>
+        <Link className={`nav-item ${activeTab === 'forum' ? 'active' : ''}`} to="/forum">Forum</Link>
+        <Link className={`nav-item ${activeTab === 'profil' ? 'active' : ''}`} to="/profil">Profil</Link>
       </div>
 
       <div className="nav-auth">

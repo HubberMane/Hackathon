@@ -1,26 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import './App.css';
 
 import Navbar from './components/Navbar';
 import ProfileDrawer from './components/ProfileDrawer';
 import Modal from './components/Modal';
-
-import Home from './pages/Home';
 import Sports from './pages/Sports';
-import Forum from './pages/Forum';
+import Profile from './pages/Profile';
 
-function App({ initialTab = 'haberler' }) {
+const tabFromPath = (pathname) => {
+  if (pathname.startsWith('/spor')) return 'spor';
+  if (pathname.startsWith('/yemekhane')) return 'yemekhane';
+  if (pathname.startsWith('/forum')) return 'forum';
+  if (pathname.startsWith('/profil')) return 'profil';
+  if (pathname.startsWith('/blogs')) return 'haberler';
+  return 'haberler';
+};
+
+function App() {
+  const location = useLocation();
+  const activeTab = tabFromPath(location.pathname);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(initialTab);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
-  const [selectedPost, setSelectedPost] = useState(null);
-
-  useEffect(() => {
-    setActiveTab(initialTab);
-  }, [initialTab]);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -42,36 +47,17 @@ function App({ initialTab = 'haberler' }) {
     setSelectedReservation(null);
   };
 
-  const handlePostClick = (postId) => {
-    setSelectedPost(postId);
-    alert(`Post #${postId} detayları yakında eklenecek.`);
-  };
-
   return (
     <div className="app-container">
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
         onOpenDrawer={() => setIsDrawerOpen(true)}
       />
 
       <main>
-        {activeTab === 'haberler' && <Home />}
-
-        {activeTab === 'spor' && <Sports onReserveClick={handleReservationClick} />}
-
-        {activeTab === 'forum' && (
-          <Forum onPostClick={handlePostClick} />
-        )}
-
-        {activeTab === 'yemekhane' && (
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <h2>Bu sayfa yapım aşamasında...</h2>
-            <p>Çok yakında hizmetinizde.</p>
-          </div>
-        )}
+        <Outlet context={{ onReserveClick: handleReservationClick }} />
       </main>
 
       <ProfileDrawer
@@ -94,5 +80,10 @@ function App({ initialTab = 'haberler' }) {
     </div>
   );
 }
+
+export const SportsRoute = () => {
+  const { onReserveClick } = useOutletContext();
+  return <Sports onReserveClick={onReserveClick} />;
+};
 
 export default App;
