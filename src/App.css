@@ -1,0 +1,406 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 0 2rem;
+  height: 70px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.nav-item:hover, .nav-item.active {
+  background-color: #e0e7ff;
+  position: relative;
+  text-decoration: none;
+  color: #3730a3;
+}
+
+.login-btn {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.profile-pic-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #4f46e5;
+  cursor: pointer;
+}
+
+.profile-pic-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-container {
+  margin: 20px auto;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.slider-wrapper {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  position: relative;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+  padding: 40px 20px 20px;
+  box-sizing: border-box;
+}
+
+.news-grid {
+  max-width: 1200px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.news-content {
+  padding: 15px;
+}
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px; 
+  width: 300px;
+  height: 100%;
+  background: white;
+  z-index: 200;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.drawer.open {
+  right: 0; 
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.drawer-menu a {
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+  color: #333;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+.drawer-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+.logout-btn {
+  margin-top: auto;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+
+.facilities-container {
+  width: 95%; 
+  max-width: 1600px;
+  margin: 30px auto;
+  padding: 0 10px;
+}
+
+.facility-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+  margin-bottom: 30px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  min-height: 350px; 
+}
+
+@media (min-width: 1024px) {
+  .facility-card {
+    flex-direction: row;
+  }
+  .facility-image {
+    width: 35%;
+    height: auto;
+    min-height: 100%;
+  }
+  .facility-info {
+    width: 65%;
+    padding: 30px;
+  }
+}
+
+.facility-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.facility-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.facility-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 15px;
+}
+
+.facility-header h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1f2937;
+}
+
+.facility-tag {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  padding: 6px 15px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.time-slot {
+  border: 2px solid #4f46e5;
+  color: #4f46e5;
+  background: white;
+  padding: 12px 5px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.time-slot:hover {
+  background-color: #4f46e5;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(79, 70, 229, 0.3);
+}
+
+
+.time-slot.booked {
+  border: 2px solid #9ca3af; 
+  background-color: #e5e7eb; 
+  color: #4b5563; 
+  cursor: not-allowed;
+  pointer-events: none; 
+  opacity: 0.8; 
+  text-decoration: none; 
+  box-shadow: none;
+}
+
+/* --- MODAL (POP-UP) DÜZELTİLMİŞ HALİ --- */
+
+/* Arka plandaki karartma katmanı */
+.modal-overlay {
+  position: fixed; /* Sayfadan bağımsız, ekrana sabit */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Ekran genişliğinin tamamı */
+  height: 100vh; /* Ekran yüksekliğinin tamamı */
+  background-color: rgba(0, 0, 0, 0.6); /* Daha koyu şeffaf siyah */
+  display: flex; /* İçindekini ortalamak için flex */
+  justify-content: center; /* Yatayda orta */
+  align-items: center; /* Dikeyde orta */
+  z-index: 10000; /* Her şeyin (navbar, drawer vs.) en üstünde */
+  backdrop-filter: blur(3px); /* Arka planı hafif buzlar (modern efekt) */
+}
+
+/* Ortadaki beyaz kutu */
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1); /* Derin gölge */
+  position: relative;
+  
+  /* Açılış animasyonu (Hafif büyüyerek gelir) */
+  animation: modalPopUp 0.3s ease-out forwards;
+}
+
+/* Modal içindeki başlık */
+.modal-content h3 {
+  margin-top: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+/* Modal içindeki metin */
+.modal-body {
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Buton grubu */
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-confirm {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.btn-confirm:hover {
+  background-color: #4338ca;
+}
+
+.btn-cancel {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #dc2626;
+}
+
+/* Açılış Animasyonu Tanımı */
+@keyframes modalPopUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

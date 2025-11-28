@@ -1,98 +1,91 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import './App.css';
 
-// User Pages
-import UserLogin from './pages/UserLogin';
-import UserRegister from './pages/UserRegister';
-import UserDashboard from './pages/UserDashboard';
-import PlacesPage from './pages/PlacesPage';
-import EventsPage from './pages/EventsPage';
-import ForumPage from './pages/ForumPage';
-import ProfilePage from './pages/ProfilePage';
+// Bileşenleri İçe Aktarıyoruz (Import)
+import Navbar from './components/Navbar';
+import ProfileDrawer from './components/ProfileDrawer';
+import Modal from './components/Modal';
 
-// Admin Panel
-import AdminApp from '../Admin-Panel/components/layout/AdminApp';
-import AdminLogin from '../Admin-Panel/pages/Auth/LoginPage';
+// Sayfaları İçe Aktarıyoruz
+import Home from './pages/Home';
+import Sports from './pages/Sports';
 
-const BYPASS_USER_AUTH = true; // Ön izleme için kullanıcı auth'unu atla
+function App() {
+  // --- STATE YÖNETİMİ ---
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('haberler');
+  
+  // Modal State'leri
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
 
-/**
- * Protected Route for User Dashboard
- */
-const UserProtectedRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('user_token');
+  // --- FONKSİYONLAR ---
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setIsDrawerOpen(false);
+  };
 
-  if (BYPASS_USER_AUTH || isAuthenticated) {
-    return children;
-  }
+  const handleReservationClick = (facility, time) => {
+    if (!isLoggedIn) {
+      alert("Rezervasyon yapmak için lütfen önce giriş yapınız!");
+      return;
+    }
+    setSelectedReservation({ facilityName: facility.name, time: time });
+    setModalOpen(true);
+  };
 
-  return <Navigate to="/" replace />;
-};
+  const confirmReservation = () => {
+    alert(`Başarılı! ${selectedReservation.facilityName} için saat ${selectedReservation.time} rezervasyonunuz oluşturuldu.`);
+    setModalOpen(false);
+    setSelectedReservation(null);
+  };
 
-const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public User Routes */}
-        <Route
-          path="/"
-          element={BYPASS_USER_AUTH ? <Navigate to="/dashboard" replace /> : <UserLogin />}
-        />
-        <Route path="/register" element={<UserRegister />} />
+    <div className="app-container">
+      
 
-        {/* Protected User Dashboard Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <UserProtectedRoute>
-              <UserDashboard />
-            </UserProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/places"
-          element={
-            <UserProtectedRoute>
-              <PlacesPage />
-            </UserProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/events"
-          element={
-            <UserProtectedRoute>
-              <EventsPage />
-            </UserProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/forum"
-          element={
-            <UserProtectedRoute>
-              <ForumPage />
-            </UserProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard/profile"
-          element={
-            <UserProtectedRoute>
-              <ProfilePage />
-            </UserProtectedRoute>
-          }
-        />
+      <Navbar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        onOpenDrawer={() => setIsDrawerOpen(true)}
+      />
 
-        {/* Admin Login (Separate from admin panel) */}
-        <Route path="/admin-login" element={<AdminLogin />} />
+      <main>
+        {activeTab === 'haberler' && <Home />}
+        
+        {activeTab === 'spor' && <Sports onReserveClick={handleReservationClick} />}
+        
+        {(activeTab === 'yemekhane' || activeTab === 'forum') && (
+          <div style={{textAlign:'center', padding:'50px'}}>
+            <h2>Bu sayfa yapım aşamasında...</h2>
+            <p>Çok yakında hizmetinizde.</p>
+          </div>
+        )}
+      </main>
 
-        {/* Admin Panel Routes */}
-        <Route path="/admin/*" element={<AdminApp />} />
+      <ProfileDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        onLogout={handleLogout}
+      />
 
-        {/* Catch all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+      <Modal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)}
+        onConfirm={confirmReservation}
+        title="Rezervasyon Onayı"
+      >
+        <p>
+          <strong>{selectedReservation?.facilityName}</strong> tesisi için 
+          saat <strong>{selectedReservation?.time}</strong> dilimine rezervasyon yapmak üzeresiniz.
+        </p>
+      </Modal>
+
+    </div>
   );
-};
+}
 
 export default App;
