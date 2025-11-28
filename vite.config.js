@@ -1,7 +1,15 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// Vite config - admin paneli root'tan ÇAalÄ±Åatmak iÃ§in
 export default defineConfig({
   plugins: [react()],
-})
+  resolve: {
+    alias: {
+      '~admin': '/Admin-Panel',
+    },
+  },
+  server: {
+    port: 5173,
+  },
+});
