@@ -1,4 +1,6 @@
-export const forumPosts = [
+const USER_POSTS_KEY = 'userForumPosts';
+
+const baseForumPosts = [
   {
     id: 1,
     title: 'Bilgisayar Müh. 1. Sınıf Kaynak Önerisi',
@@ -16,12 +18,12 @@ export const forumPosts = [
     id: 2,
     title: 'Kayıp Kedi İlanı - Mühendislik Fakültesi',
     excerpt:
-      'Turuncu sarman kedimizi fakülte önünde kaybettik. Görenlerin acil iletişime geçmesini rica ederim. Tasması mavi renkte.',
+      'Turuncu sarman kedimizi fakülte önünde kaybettik. Görenlerin acil iletişime geçmesini rica ederim. Tasma mavi renkte.',
     author: 'Ayşe K.',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ayse',
     date: '5 saat önce',
     image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=500&q=80',
-    tags: ['kayip', 'acil'],
+    tags: ['kayıp', 'acil'],
     upvotes: 156,
     comments: 4,
   },
@@ -53,4 +55,36 @@ export const forumPosts = [
   },
 ];
 
-export const getForumPost = (id) => forumPosts.find((post) => String(post.id) === String(id));
+const isBrowser = typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+
+const safeParse = (value, fallback) => {
+  try {
+    return JSON.parse(value) || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+export const loadUserPosts = () => {
+  if (!isBrowser) return [];
+  const stored = localStorage.getItem(USER_POSTS_KEY);
+  return stored ? safeParse(stored, []) : [];
+};
+
+export const saveUserPosts = (posts) => {
+  if (!isBrowser) return;
+  localStorage.setItem(USER_POSTS_KEY, JSON.stringify(posts));
+};
+
+export const addUserPost = (post) => {
+  const next = [post, ...loadUserPosts()];
+  saveUserPosts(next);
+  return next;
+};
+
+export const getAllForumPosts = () => [...loadUserPosts(), ...baseForumPosts];
+
+export const getForumPost = (id) =>
+  getAllForumPosts().find((post) => String(post.id) === String(id));
+
+export { baseForumPosts as forumPosts };

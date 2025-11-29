@@ -70,7 +70,7 @@ function App() {
       />
 
       <main>
-        <Outlet context={{ onReserveClick: handleReservationClick }} />
+        <Outlet context={{ onReserveClick: handleReservationClick, isLoggedIn }} />
       </main>
 
       <ProfileDrawer

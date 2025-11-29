@@ -14,12 +14,12 @@ const ProfileDrawer = ({ isOpen, onClose, onLogout }) => {
       <div className={`drawer ${isOpen ? 'open' : ''}`}>
         <div className="drawer-header">
           <h3>Kullanıcı Paneli</h3>
-          <button onClick={onClose} style={{background:'none', border:'none', fontSize:'20px', cursor:'pointer'}}>X</button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>X</button>
         </div>
         
         <div className="drawer-menu">
           <Link to="/profil" onClick={handleNavigate}>Profilim</Link>
-          <Link to="/blogs" onClick={handleNavigate}>Postlarım</Link>
+          <Link to="/forum/benim-gonderilerim" onClick={handleNavigate}>Forum Gönderilerim</Link>
         </div>
 
         <button className="logout-btn" onClick={onLogout}>

@@ -6,6 +6,8 @@ import App, { SportsRoute } from './App.jsx';
 import Home from './pages/Home.jsx';
 import Forum from './pages/Forum.jsx';
 import ForumPost from './pages/ForumPost.jsx';
+import MyPosts from './pages/MyPosts.jsx';
+import CreatePost from './pages/CreatePost.jsx';
 import Cafeteria from './pages/Cafeteria.jsx';
 import Profile from './pages/Profile.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
@@ -29,6 +31,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="yemekhane" element={<Cafeteria />} />
           <Route path="spor" element={<SportsRoute />} />
           <Route path="forum" element={<Forum />} />
+          <Route path="forum/olustur" element={<CreatePost />} />
+          <Route path="forum/benim-gonderilerim" element={<MyPosts />} />
           <Route path="forum/:id" element={<ForumPost />} />
           <Route path="profil" element={<Profile />} />
         </Route>

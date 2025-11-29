@@ -174,9 +174,10 @@ html, body, #root {
 }
 
 .like-button.is-active {
-  background: linear-gradient(135deg, rgba(45, 25, 142, 0.16), rgba(79, 70, 229, 0.18));
-  color: #2d198e;
-  box-shadow: 0 8px 16px rgba(45, 25, 142, 0.2);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  color: #f8fafc;
+  border-color: #1e3a8a;
+  box-shadow: 0 10px 20px rgba(30, 64, 175, 0.25);
 }
 
 .drawer-overlay {
@@ -472,6 +473,20 @@ html, body, #root {
   font-size: 12px;
   font-weight: 700;
   text-transform: lowercase;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: lowercase;
+  border: 1px solid #e0e7ff;
 }
 
 .forum-title {
@@ -813,6 +828,13 @@ body.dark-mode .cafeteria__note {
   border-color: rgba(174, 227, 115, 0.32);
 }
 
+/* Standalone tags (e.g., on detail pages) in dark mode */
+body.dark-mode .tag {
+  background: rgba(223, 227, 168, 0.18);
+  color: #e7edc2;
+  border: 1px solid rgba(174, 227, 115, 0.32);
+}
+
 body.dark-mode .muted {
   color: #c5d19a;
 }
@@ -867,10 +889,10 @@ body.dark-mode .like-button {
 }
 
 body.dark-mode .like-button.is-active {
-  background: linear-gradient(135deg, rgba(174, 227, 115, 0.18), rgba(223, 227, 168, 0.2));
-  color: #1a1f12;
-  border-color: #aee373;
-  box-shadow: 0 8px 16px rgba(174, 227, 115, 0.25);
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+  color: #f8fafc;
+  border-color: #1e3a8a;
+  box-shadow: 0 10px 20px rgba(30, 64, 175, 0.35);
 }
 
 body.dark-mode .nav-brand {

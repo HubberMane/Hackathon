@@ -2,6 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { getForumPost } from '../data/forumPosts';
 
+const seededComments = [
+  { id: 1, author: 'Ayşe K.', text: 'Harika bir konu, teşekkürler!', createdAt: '2 saat önce' },
+  { id: 2, author: 'Mehmet T.', text: 'Ben de katılıyorum, iyi toparlanmış.', createdAt: '1 saat önce' },
+];
+
 const ForumPost = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -10,10 +15,8 @@ const ForumPost = () => {
 
   const baseLikes = useMemo(() => post?.upvotes || 0, [post]);
   const [liked, setLiked] = useState(false);
-  const [comments, setComments] = useState([
-    { id: 1, author: 'Ayşe K.', text: 'Harika bir konu, teşekkürler!', createdAt: '2 saat önce' },
-    { id: 2, author: 'Mehmet T.', text: 'Ben de katılıyorum, iyi toparlanmış.', createdAt: '1 saat önce' },
-  ]);
+  const [comments, setComments] = useState(seededComments);
+  const [commentCount, setCommentCount] = useState(() => post?.comments ?? seededComments.length);
   const [newComment, setNewComment] = useState('');
 
   if (!post) {
@@ -31,6 +34,7 @@ const ForumPost = () => {
       ...prev,
       { id: Date.now(), author: 'Sen', text: newComment.trim(), createdAt: 'az önce' },
     ]);
+    setCommentCount((prev) => prev + 1);
     setNewComment('');
   };
 
@@ -44,7 +48,7 @@ const ForumPost = () => {
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {post.tags?.map((tag) => (
-            <span key={tag} className="tag" style={{ padding: '6px 10px', borderRadius: '999px', background: '#eef2ff', color: '#4338ca', fontWeight: 700, textTransform: 'lowercase' }}>{tag}</span>
+            <span key={tag} className="tag">{tag}</span>
           ))}
         </div>
       </header>
@@ -59,14 +63,17 @@ const ForumPost = () => {
         {post.excerpt}
       </p>
 
-      <div style={{ marginTop: '16px', display: 'flex', gap: '12px', color: 'inherit' }}>
+      <div style={{ marginTop: '16px', display: 'flex', gap: '12px', alignItems: 'center', color: 'inherit' }}>
         <button
           className={`like-button ${liked ? 'is-active' : ''}`}
           onClick={() => setLiked((prev) => !prev)}
         >
-          👍 {liked ? 'Beğenildi' : 'Beğen'} ({baseLikes + (liked ? 1 : 0)})
+          👍 Beğen ({baseLikes + (liked ? 1 : 0)})
         </button>
-        <span>💬 {post.comments}</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <span aria-hidden>💬</span>
+          <span>{commentCount}</span>
+        </span>
       </div>
 
       <section style={{ marginTop: '24px' }}>

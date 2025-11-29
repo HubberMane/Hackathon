@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { addUserPost } from '../data/forumPosts';
+
+const CreatePost = () => {
+  const { isLoggedIn } = useOutletContext() || {};
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    title: '',
+    excerpt: '',
+    tags: '',
+    imageUrl: '',
+  });
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      alert('Gönderi oluşturmak için lütfen giriş yapın.');
+      return;
+    }
+    if (!form.title.trim() || !form.excerpt.trim()) return;
+
+    const now = new Date();
+    addUserPost({
+      id: `u-${now.getTime()}`,
+      title: form.title.trim(),
+      excerpt: form.excerpt.trim(),
+      author: 'Sen',
+      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=You',
+      date: 'az önce',
+      image: form.imageUrl.trim() || null,
+      tags: form.tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+        .map((t) => t.toLowerCase()),
+      upvotes: 0,
+      comments: 0,
+    });
+
+    setForm({ title: '', excerpt: '', tags: '', imageUrl: '' });
+    navigate('/forum/benim-gonderilerim', { replace: true });
+  };
+
+  return (
+    <div style={{ minHeight: '70vh', padding: '24px 20px 50px' }}>
+      <article className="detail-card" style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gap: '12px' }}>
+        <header>
+          <p className="eyebrow" style={{ margin: 0 }}>Forum</p>
+          <h1 style={{ margin: '6px 0 4px' }}>Yeni Gönderi </h1>
+          <p className="muted" style={{ margin: 0 }}>Kampüs topluluğu ile paylaşmak istediğin konuyu ekle.</p>
+        </header>
+
+        {!isLoggedIn && (
+          <p className="muted" style={{ margin: '0 0 6px' }}>
+            Gönderi eklemek için giriş yapmalısın.
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '12px' }}>
+          <input
+            className="search-input"
+            placeholder="Başlık"
+            value={form.title}
+            onChange={(e) => handleChange('title', e.target.value)}
+            required
+            disabled={!isLoggedIn}
+          />
+          <textarea
+            placeholder="Açıklama"
+            value={form.excerpt}
+            onChange={(e) => handleChange('excerpt', e.target.value)}
+            style={{
+              width: '100%',
+              minHeight: '120px',
+              padding: '12px 14px',
+              borderRadius: '12px',
+              border: '1px solid #e5e7eb',
+              fontFamily: 'inherit',
+            }}
+            required
+            disabled={!isLoggedIn}
+          />
+          <input
+            className="search-input"
+            placeholder="Etiketler (virgül ile)"
+            value={form.tags}
+            onChange={(e) => handleChange('tags', e.target.value)}
+            disabled={!isLoggedIn}
+          />
+          <input
+            className="search-input"
+            placeholder="Görsel URL (isteğe bağlı)"
+            value={form.imageUrl}
+            onChange={(e) => handleChange('imageUrl', e.target.value)}
+            disabled={!isLoggedIn}
+          />
+
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button type="submit" className="save-btn" disabled={!isLoggedIn}>
+              Gönderi Ekle
+            </button>
+            <button
+              type="button"
+              className="tab-btn"
+              onClick={() => navigate('/forum')}
+            >
+              Foruma Dön
+            </button>
+          </div>
+        </form>
+      </article>
+    </div>
+  );
+};
+
+export default CreatePost;

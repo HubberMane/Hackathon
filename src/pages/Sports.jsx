@@ -62,16 +62,12 @@ const Sports = () => {
           <div className="facility-info">
             <div className="facility-header">
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.3rem' }}>{facility.name}</h3>
+                <h3 style={{ margin: 10, fontSize: '1.3rem' }}>{facility.name}</h3>
                 <span className="hours-badge"> {facility.hours}</span>
               </div>
               <span className="facility-tag">{facility.type}</span>
             </div>
 
-            <p style={{ fontSize: '0.9rem', color: '#555' }}>
-              Saatler yalnızca bilgilendirme içindir. Randevu işlemi harici sayfada yapılacaktır;
-              gri saatler dolu, renkli saatler uygundur.
-            </p>
 
             <div className="slots-grid">
               {facility.slots.map((slot, index) => (

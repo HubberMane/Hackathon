@@ -64,7 +64,6 @@ const GSB_MENUS = {
 
 const mealLabel = {
   breakfast: 'Kahvaltı',
-  lunch: 'Öğle',
   dinner: 'Akşam',
 };
 
@@ -89,7 +88,6 @@ const Cafeteria = () => {
   return (
     <section className="cafeteria">
       <header className="cafeteria__header" style={{ textAlign: 'center', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-        <p className="eyebrow" style={{ fontSize: '14px', letterSpacing: '1px' }}>Yemekhane</p>
         <h1 style={{ fontSize: '32px', margin: '6px 0 8px' }}>Haftalık Menüler</h1>
         <p className="muted" style={{ maxWidth: '720px', margin: '0 auto', fontSize: '16px' }}>
           Dengeli, doyurucu ve kampüs temposuna uyumlu menüler. Günlük kalori bilgileriyle birlikte sunulur.
@@ -194,7 +192,7 @@ const Cafeteria = () => {
                 ? menu.dinner
                 : menu.items;
 
-            const label = active === 'gsb' ? 'Öğle' : mealLabel[meal];
+            const label = active === mealLabel[meal];
 
             return (
               <article key={menu.day} className="cafeteria__card">
