@@ -1,42 +1,101 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { getForumPost } from '../data/forumPosts';
-
-const seededComments = [
-  { id: 1, author: 'Ayşe K.', text: 'Harika bir konu, teşekkürler!', createdAt: '2 saat önce' },
-  { id: 2, author: 'Mehmet T.', text: 'Ben de katılıyorum, iyi toparlanmış.', createdAt: '1 saat önce' },
-];
+import { fetchForumComments, fetchForumPost } from '../services/api';
 
 const ForumPost = () => {
   const { id } = useParams();
   const location = useLocation();
-  const fallback = getForumPost(id);
-  const post = location.state?.post || fallback;
+  const [post, setPost] = useState(location.state?.post || null);
+  const [loading, setLoading] = useState(!location.state?.post);
+  const [error, setError] = useState('');
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
+  const [commentError, setCommentError] = useState('');
+  const [newComment, setNewComment] = useState('');
+  const [liked, setLiked] = useState(false);
 
   const baseLikes = useMemo(() => post?.upvotes || 0, [post]);
-  const [liked, setLiked] = useState(false);
-  const [comments, setComments] = useState(seededComments);
-  const [commentCount, setCommentCount] = useState(() => post?.comments ?? seededComments.length);
-  const [newComment, setNewComment] = useState('');
 
-  if (!post) {
-    return (
-      <div className="detail-card" style={{ textAlign: 'center' }}>
-        <h2>Bu gönderi bulunamadı.</h2>
-        <p className="muted">Silinmiş veya henüz yayınlanmamış olabilir.</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (post) {
+      setComments(post.comments || []);
+      setLoading(false);
+      setLoadingComments(false);
+      return undefined;
+    }
+
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
+      const { data, error: fetchError } = await fetchForumPost(id);
+      if (ignore) return;
+
+      if (fetchError) {
+        setError('GÇônderi getirilemedi veya silinmiY olabilir.');
+      } else {
+        setPost(data || null);
+        setComments(data?.comments || []);
+        setError('');
+      }
+      setLoading(false);
+      setLoadingComments(false);
+    };
+
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [id, post]);
+
+  useEffect(() => {
+    if (!id) return undefined;
+    let ignore = false;
+
+    const loadComments = async () => {
+      setLoadingComments(true);
+      const { data, error: fetchError } = await fetchForumComments(id);
+      if (ignore) return;
+
+      if (fetchError) {
+        setCommentError('Yorumlar yÇüklenemedi.');
+      } else if (Array.isArray(data) || Array.isArray(data?.comments)) {
+        setComments(Array.isArray(data) ? data : data.comments);
+        setCommentError('');
+      }
+      setLoadingComments(false);
+    };
+
+    loadComments();
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
     setComments((prev) => [
       ...prev,
-      { id: Date.now(), author: 'Sen', text: newComment.trim(), createdAt: 'az önce' },
+      { id: Date.now(), author: 'Sen', text: newComment.trim(), createdAt: 'az Çônce' },
     ]);
-    setCommentCount((prev) => prev + 1);
     setNewComment('');
   };
+
+  if (loading) {
+    return (
+      <div className="detail-card" style={{ textAlign: 'center' }}>
+        <h2>GÇônderi yÇükleniyor...</h2>
+      </div>
+    );
+  }
+
+  if (!post || error) {
+    return (
+      <div className="detail-card" style={{ textAlign: 'center' }}>
+        <h2>Bu gÇônderi bulunamadŽñ.</h2>
+        <p className="muted">{error || 'SilinmiY veya henÇ¬z yayŽñnlanmamŽñY olabilir.'}</p>
+      </div>
+    );
+  }
 
   return (
     <article className="detail-card">
@@ -44,10 +103,10 @@ const ForumPost = () => {
         <div>
           <p className="eyebrow" style={{ margin: 0 }}>Forum</p>
           <h1 style={{ margin: '6px 0 4px' }}>{post.title}</h1>
-          <p className="muted" style={{ margin: 0 }}>{post.author} • {post.date}</p>
+          <p className="muted" style={{ margin: 0 }}>{post.author} ƒ?½ {post.date}</p>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {post.tags?.map((tag) => (
+          {(post.tags || []).map((tag) => (
             <span key={tag} className="tag">{tag}</span>
           ))}
         </div>
@@ -68,26 +127,41 @@ const ForumPost = () => {
           className={`like-button ${liked ? 'is-active' : ''}`}
           onClick={() => setLiked((prev) => !prev)}
         >
-          👍 Beğen ({baseLikes + (liked ? 1 : 0)})
+          §Y'? BeŽYen ({baseLikes + (liked ? 1 : 0)})
         </button>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-          <span aria-hidden>💬</span>
-          <span>{commentCount}</span>
+          <span aria-hidden>§Y'ª</span>
+          <span>{comments.length}</span>
         </span>
       </div>
 
       <section style={{ marginTop: '24px' }}>
         <h3 style={{ margin: '0 0 10px' }}>Yorumlar</h3>
-        <div style={{ display: 'grid', gap: '12px' }}>
-          {comments.map((c) => (
-            <div key={c.id} className="comment-card">
-              <p style={{ margin: 0, fontWeight: 700 }}>
-                {c.author} <span style={{ color: '#6b7280', fontWeight: 400 }}>• {c.createdAt}</span>
-              </p>
-              <p className="comment-text" style={{ margin: '4px 0 0' }}>{c.text}</p>
-            </div>
-          ))}
-        </div>
+
+        {commentError && (
+          <div className="detail-card" style={{ background: '#fff5f5', border: '1px solid #fecdd3', marginBottom: '10px' }}>
+            <p style={{ margin: 0, color: '#b91c1c' }}>{commentError}</p>
+          </div>
+        )}
+
+        {loadingComments ? (
+          <p className="muted">Yorumlar yÇükleniyor...</p>
+        ) : (
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {comments.length ? (
+              comments.map((c) => (
+                <div key={c.id} className="comment-card">
+                  <p style={{ margin: 0, fontWeight: 700 }}>
+                    {c.author} <span style={{ color: '#6b7280', fontWeight: 400 }}>ƒ?½ {c.createdAt}</span>
+                  </p>
+                  <p className="comment-text" style={{ margin: '4px 0 0' }}>{c.text}</p>
+                </div>
+              ))
+            ) : (
+              <p className="muted">HenÇ¬z yorum yapŽñlmamŽñY.</p>
+            )}
+          </div>
+        )}
 
         <div style={{ marginTop: '14px', display: 'flex', gap: '10px' }}>
           <textarea
@@ -116,7 +190,7 @@ const ForumPost = () => {
               minWidth: '110px',
             }}
           >
-            Gönder
+            GÇônder
           </button>
         </div>
       </section>

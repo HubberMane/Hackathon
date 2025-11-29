@@ -1,13 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loadUserPosts } from '../data/forumPosts';
+import { fetchForumPosts } from '../services/api';
 
 const MyPosts = () => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    setPosts(loadUserPosts());
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
+      const { data, error: fetchError } = await fetchForumPosts('scope=me');
+      if (ignore) return;
+
+      if (fetchError) {
+        setError('GÇônderilerin getirilebilmesi iÇõin backend baYlantŽñ gerekli.');
+        setPosts([]);
+      } else {
+        setPosts(Array.isArray(data) ? data : data?.posts || []);
+        setError('');
+      }
+      setLoading(false);
+    };
+
+    load();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const handlePostClick = (post) => {
@@ -19,20 +40,30 @@ const MyPosts = () => {
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
         <div>
           <p className="eyebrow" style={{ margin: 0 }}>Forum</p>
-          <h1 style={{ margin: '6px 0 4px' }}>Oluşturduğum Gönderiler</h1>
-          <p className="muted" style={{ margin: 0 }}>Kendi paylaşımlarını burada yönet.</p>
+          <h1 style={{ margin: '6px 0 4px' }}>OluYturduŽYum GÇônderiler</h1>
+          <p className="muted" style={{ margin: 0 }}>Kendi paylaYŽñmlarŽñnŽñ burada yÇônet.</p>
         </div>
         <button className="save-btn" onClick={() => navigate('/forum')}>
-          Foruma Dön
+          Foruma DÇôn
         </button>
       </header>
 
-      {posts.length === 0 ? (
+      {error && (
+        <div className="detail-card" style={{ background: '#fff5f5', border: '1px solid #fecdd3', marginBottom: '10px' }}>
+          <p style={{ margin: 0, color: '#b91c1c' }}>{error}</p>
+        </div>
+      )}
+
+      {loading ? (
         <div className="detail-card" style={{ textAlign: 'center' }}>
-          <h3>Henüz gönderi oluşturmadın.</h3>
-          <p className="muted">Forum sayfasından yeni bir konu açabilirsin.</p>
+          <h3>GÇônderiler yÇükleniyor...</h3>
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="detail-card" style={{ textAlign: 'center' }}>
+          <h3>HenÇ¬z gÇônderi oluYturmadŽñn.</h3>
+          <p className="muted">Backend baYlantŽñ geldiYinde kendi gÇônderilerin burada listelenecek.</p>
           <button className="save-btn" onClick={() => navigate('/forum')} style={{ marginTop: '10px' }}>
-            Gönderi Oluştur
+            GÇônderi OluYtur
           </button>
         </div>
       ) : (
@@ -47,7 +78,7 @@ const MyPosts = () => {
 
               <div className="forum-content">
                 <div className="forum-tags">
-                  {post.tags.map((tag, idx) => (
+                  {(post.tags || []).map((tag, idx) => (
                     <span key={idx} className="tag">
                       {tag}
                     </span>
@@ -61,12 +92,12 @@ const MyPosts = () => {
                   <div className="author-info">
                     <img src={post.authorAvatar} alt="avatar" className="author-avatar" />
                     <span>
-                      {post.author} • {post.date}
+                      {post.author} ƒ?½ {post.date}
                     </span>
                   </div>
                   <div className="interaction-stats">
-                    <span>👍 {post.upvotes}</span>
-                    <span>💬 {post.comments}</span>
+                    <span>§Y'? {post.upvotes}</span>
+                    <span>§Y'ª {post.comments}</span>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { addUserPost } from '../data/forumPosts';
+import { createForumPost } from '../services/api';
 
 const CreatePost = () => {
   const { isLoggedIn } = useOutletContext() || {};
@@ -12,38 +12,43 @@ const CreatePost = () => {
     tags: '',
     imageUrl: '',
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
-      alert('Gönderi oluşturmak için lütfen giriş yapın.');
+      alert('GÇônderi oluYturmak iÇõin lÇ¬tfen giriY yapŽñn.');
       return;
     }
     if (!form.title.trim() || !form.excerpt.trim()) return;
 
-    const now = new Date();
-    addUserPost({
-      id: `u-${now.getTime()}`,
+    setSubmitting(true);
+    const payload = {
       title: form.title.trim(),
       excerpt: form.excerpt.trim(),
-      author: 'Sen',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=You',
-      date: 'az önce',
       image: form.imageUrl.trim() || null,
       tags: form.tags
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean)
         .map((t) => t.toLowerCase()),
-      upvotes: 0,
-      comments: 0,
-    });
+    };
 
+    const { error } = await createForumPost(payload);
+    if (error) {
+      setSubmitError('GÇônderi backend e kaydedilirken hata oluYtu.');
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitError('');
     setForm({ title: '', excerpt: '', tags: '', imageUrl: '' });
+    setSubmitting(false);
     navigate('/forum/benim-gonderilerim', { replace: true });
   };
 
@@ -52,27 +57,33 @@ const CreatePost = () => {
       <article className="detail-card" style={{ maxWidth: '900px', margin: '0 auto', display: 'grid', gap: '12px' }}>
         <header>
           <p className="eyebrow" style={{ margin: 0 }}>Forum</p>
-          <h1 style={{ margin: '6px 0 4px' }}>Yeni Gönderi </h1>
-          <p className="muted" style={{ margin: 0 }}>Kampüs topluluğu ile paylaşmak istediğin konuyu ekle.</p>
+          <h1 style={{ margin: '6px 0 4px' }}>Yeni GÇônderi </h1>
+          <p className="muted" style={{ margin: 0 }}>KampÇ¬s topluluŽYu ile paylaYmak istediŽYin konuyu ekle.</p>
         </header>
 
         {!isLoggedIn && (
           <p className="muted" style={{ margin: '0 0 6px' }}>
-            Gönderi eklemek için giriş yapmalısın.
+            GÇônderi eklemek iÇõin giriY yapmalŽñsŽñn.
           </p>
+        )}
+
+        {submitError && (
+          <div className="detail-card" style={{ background: '#fff5f5', border: '1px solid #fecdd3' }}>
+            <p style={{ margin: 0, color: '#b91c1c' }}>{submitError}</p>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '12px' }}>
           <input
             className="search-input"
-            placeholder="Başlık"
+            placeholder="BaYlŽñk"
             value={form.title}
             onChange={(e) => handleChange('title', e.target.value)}
             required
             disabled={!isLoggedIn}
           />
           <textarea
-            placeholder="Açıklama"
+            placeholder="AÇõŽñklama"
             value={form.excerpt}
             onChange={(e) => handleChange('excerpt', e.target.value)}
             style={{
@@ -88,29 +99,29 @@ const CreatePost = () => {
           />
           <input
             className="search-input"
-            placeholder="Etiketler (virgül ile)"
+            placeholder="Etiketler (virgÇ¬l ile)"
             value={form.tags}
             onChange={(e) => handleChange('tags', e.target.value)}
             disabled={!isLoggedIn}
           />
           <input
             className="search-input"
-            placeholder="Görsel URL (isteğe bağlı)"
+            placeholder="GÇôrsel URL (isteŽYe baŽYlŽñ)"
             value={form.imageUrl}
             onChange={(e) => handleChange('imageUrl', e.target.value)}
             disabled={!isLoggedIn}
           />
 
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button type="submit" className="save-btn" disabled={!isLoggedIn}>
-              Gönderi Ekle
+            <button type="submit" className="save-btn" disabled={!isLoggedIn || submitting}>
+              {submitting ? 'Kaydediliyor...' : 'GÇônderi Ekle'}
             </button>
             <button
               type="button"
               className="tab-btn"
               onClick={() => navigate('/forum')}
             >
-              Foruma Dön
+              Foruma DÇôn
             </button>
           </div>
         </form>

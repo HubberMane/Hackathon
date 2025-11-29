@@ -1,97 +1,117 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchFacilities } from '../services/api';
 
-const FACILITIES = [
-  {
-    id: 1,
-    name: 'Akdeniz Üni. Kapalı Yüzme Havuzu',
-    type: 'Yüzme',
-    hours: '08:00 - 20:00',
-    image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80',
-    appointmentUrl: 'https://randevu.example.com/pool',
-    slots: [
-      { time: '09:00', isBooked: true },
-      { time: '10:00', isBooked: false },
-      { time: '11:00', isBooked: false },
-      { time: '12:00', isBooked: true },
-      { time: '13:00', isBooked: false },
-      { time: '14:00', isBooked: true },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Konyaaltı Tenis Kortları',
-    type: 'Tenis',
-    hours: '10:00 - 22:00',
-    image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=800&q=80',
-    appointmentUrl: 'https://randevu.example.com/tenis',
-    slots: [
-      { time: '16:00', isBooked: false },
-      { time: '17:00', isBooked: true },
-      { time: '18:00', isBooked: true },
-      { time: '19:00', isBooked: false },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Kepez Halı Saha Tesisleri',
-    type: 'Futbol',
-    hours: '17:00 - 02:00',
-    image: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=800&q=80',
-    appointmentUrl: 'https://randevu.example.com/hali-saha',
-    slots: [
-      { time: '19:00', isBooked: false },
-      { time: '20:00', isBooked: false },
-      { time: '21:00', isBooked: true },
-      { time: '22:00', isBooked: false },
-    ],
-  },
-];
+const Sports = ({ onReserveClick }) => {
+  const [facilities, setFacilities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-const Sports = () => {
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
+      const { data, error: fetchError } = await fetchFacilities();
+      if (ignore) return;
+
+      if (fetchError) {
+        setError('Spor tesisi listesi alŽñnamadŽñ. Backend baYlantŽñnŽñ kontrol edin.');
+        setFacilities([]);
+      } else {
+        setFacilities(Array.isArray(data) ? data : data?.facilities || []);
+        setError('');
+      }
+      setLoading(false);
+    };
+
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const handleSlotClick = (facility, slot) => {
+    if (!onReserveClick || slot?.isBooked) return;
+    onReserveClick(facility, slot.time);
+  };
+
   return (
     <div className="facilities-container">
       <h2 style={{ borderLeft: '5px solid #4f46e5', paddingLeft: '15px', marginBottom: '25px' }}>
         Antalya Spor Tesisleri & Rezervasyon
       </h2>
 
-      {FACILITIES.map((facility) => (
-        <div key={facility.id} className="facility-card">
-          <div className="facility-image">
-            <img src={facility.image} alt={facility.name} />
-          </div>
-          <div className="facility-info">
-            <div className="facility-header">
-              <div>
-                <h3 style={{ margin: 10, fontSize: '1.3rem' }}>{facility.name}</h3>
-                <span className="hours-badge"> {facility.hours}</span>
-              </div>
-              <span className="facility-tag">{facility.type}</span>
-            </div>
-
-
-            <div className="slots-grid">
-              {facility.slots.map((slot, index) => (
-                <div
-                  key={index}
-                  className={`time-slot ${slot.isBooked ? 'booked' : 'available'}`}
-                >
-                  <span>{slot.time}</span>
-                  <small className="slot-status">{slot.isBooked ? 'Dolu' : 'Müsait'}</small>
-                </div>
-              ))}
-            </div>
-
-            <a
-              className="external-reserve-btn"
-              href={facility.appointmentUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Randevu sayfasına git
-            </a>
-          </div>
+      {error && (
+        <div className="detail-card" style={{ background: '#fff5f5', border: '1px solid #fecdd3' }}>
+          <p style={{ margin: 0, color: '#b91c1c' }}>{error}</p>
         </div>
-      ))}
+      )}
+
+      {loading ? (
+        <div className="detail-card" style={{ textAlign: 'center' }}>
+          <h3>Tesisler yÇükleniyor...</h3>
+        </div>
+      ) : !facilities.length ? (
+        <div className="detail-card" style={{ textAlign: 'center' }}>
+          <h3>Tesis bulunamadŽñ</h3>
+          <p className="muted">Backend baYlantŽñ geldikten sonra burada tesis listesi gÇûrÇ¬necek.</p>
+        </div>
+      ) : (
+        facilities.map((facility) => (
+          <div key={facility.id} className="facility-card">
+            <div className="facility-image">
+              {facility.image ? (
+                <img src={facility.image} alt={facility.name} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', background: '#f3f4f6', display: 'grid', placeItems: 'center' }}>
+                  <span className="muted">GÇôrsel yok</span>
+                </div>
+              )}
+            </div>
+            <div className="facility-info">
+              <div className="facility-header">
+                <div>
+                  <h3 style={{ margin: 10, fontSize: '1.3rem' }}>{facility.name}</h3>
+                  {facility.hours && <span className="hours-badge"> {facility.hours}</span>}
+                </div>
+                {facility.type && <span className="facility-tag">{facility.type}</span>}
+              </div>
+
+              <div className="slots-grid">
+                {(facility.slots || []).length ? (
+                  facility.slots.map((slot, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleSlotClick(facility, slot)}
+                      className={`time-slot ${slot.isBooked ? 'booked' : 'available'}`}
+                      disabled={slot.isBooked}
+                      style={{ cursor: slot.isBooked ? 'not-allowed' : 'pointer' }}
+                    >
+                      <span>{slot.time}</span>
+                      <small className="slot-status">{slot.isBooked ? 'Dolu' : 'MÇ¬sait'}</small>
+                    </button>
+                  ))
+                ) : (
+                  <div style={{ gridColumn: '1/-1', textAlign: 'center', color: '#6b7280' }}>
+                    Slot bilgisi henÇ¬z gelmedi.
+                  </div>
+                )}
+              </div>
+
+              {facility.appointmentUrl && (
+                <a
+                  className="external-reserve-btn"
+                  href={facility.appointmentUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Randevu sayfasŽñna git
+                </a>
+              )}
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 };

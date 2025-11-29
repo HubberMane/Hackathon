@@ -1,18 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { blogs } from '../data/blogs';
+import { fetchBlogs } from '../services/api';
 
 const Home = () => {
+  const [blogs, setBlogs] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const sliderData = blogs.slice(0, 3);
+  const sliderData = useMemo(() => blogs.slice(0, 3), [blogs]);
   
   useEffect(() => {
+    let ignore = false;
+
+    const loadBlogs = async () => {
+      setLoading(true);
+      const { data, error: fetchError } = await fetchBlogs();
+      if (ignore) return;
+
+      if (fetchError) {
+        setError('Haberler yÇüklenirken bir sorun oluYtu. LÇ¬tfen daha sonra tekrar deneyin.');
+        setBlogs([]);
+      } else {
+        setBlogs(Array.isArray(data) ? data : data?.blogs || []);
+        setError('');
+      }
+      setLoading(false);
+    };
+
+    loadBlogs();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (sliderData.length <= 1) return undefined;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev === sliderData.length - 1 ? 0 : prev + 1));
     }, 5000);
     return () => clearInterval(timer);
   }, [sliderData.length]);
+
+  if (loading) {
+    return (
+      <div className="detail-card" style={{ textAlign: 'center' }}>
+        <h2>Haberler yÇükleniyor...</h2>
+        <p className="muted">LÇ¬tfen bekleyin.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="detail-card" style={{ textAlign: 'center' }}>
+        <h2>Haberler getirilemedi</h2>
+        <p className="muted">{error}</p>
+      </div>
+    );
+  }
+
+  if (!blogs.length) {
+    return (
+      <div className="detail-card" style={{ textAlign: 'center' }}>
+        <h2>HenÇ¬z haber bulunmuyor</h2>
+        <p className="muted">Backend baYlantŽñ geldikten sonra burada gÇüncel haberleri gÇûreceksiniz.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
